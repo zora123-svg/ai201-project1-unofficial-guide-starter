@@ -12,14 +12,16 @@ import chromadb
 
 from src.embed import CHROMA_PATH, COLLECTION_NAME, get_model
 
-TOP_K = 5  # tuned up from 4: at k=4 some relevant chunks (e.g. the Midway
-           # Reddit thread, rank 5 @ 0.347) were just missed; see planning.md.
+TOP_K = 6  # tuned up from 4: relevant opinion chunks (e.g. the Midway Reddit
+           # thread @ 0.347) sit just below generic rental boilerplate that
+           # shares query words, so a slightly larger k is needed to include
+           # them. See planning.md Retrieval Approach.
 
 # The 5 evaluation questions from planning.md.
 EVAL_QUERIES = [
     "How many days does a landlord in Minnesota have to return my security deposit after I move out?",
     "Are there rules on how much my rent can be raised each year in St. Paul?",
-    "Which neighborhoods near University of St. Thomas are popular with students and considered safe?",
+    "What are the safest neighborhoods in St. Paul for students?",
     "What is the Student Tenant Education Program (STEP) and why would I take it?",
     "What do students or residents say about renting in the Midway area of St. Paul?",
 ]

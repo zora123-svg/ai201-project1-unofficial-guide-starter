@@ -30,6 +30,14 @@ OVERLAP = 100          # characters shared between consecutive chunks
 # How far back from the target cut we'll look for a sentence boundary.
 BOUNDARY_SEARCH = 120
 
+# Some sources are guides that pack different topics into adjacent sections
+# (e.g. a neighborhood's safety stats sit right next to a long restaurant
+# list). At 500 chars a safety fact gets bundled with unrelated text and its
+# embedding is diluted, so we chunk these sources smaller to isolate facts.
+SMALL_CHUNK_SIZE = 280
+SMALL_OVERLAP = 60
+SMALL_CHUNK_SOURCES = ("extraspace", "themovecrew")
+
 # A sentence/paragraph boundary: . ! ? or newline, optionally followed by
 # closing quotes/brackets, then whitespace.
 _BOUNDARY_RE = re.compile(r"[.!?\n][\"')\]]?\s")
@@ -93,7 +101,11 @@ def chunk_documents(cleaned_docs: list[dict]) -> list[dict]:
     all_chunks = []
     seen: set[str] = set()
     for doc in cleaned_docs:
-        pieces = chunk_text(doc["text"])
+        # Mixed-topic guide sources get smaller chunks (see SMALL_CHUNK_SOURCES).
+        if any(tag in doc["source"].lower() for tag in SMALL_CHUNK_SOURCES):
+            pieces = chunk_text(doc["text"], SMALL_CHUNK_SIZE, SMALL_OVERLAP)
+        else:
+            pieces = chunk_text(doc["text"])
         for i, piece in enumerate(pieces):
             key = " ".join(piece.split()).lower()  # normalise whitespace/case
             if key in seen:
