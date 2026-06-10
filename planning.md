@@ -62,7 +62,7 @@
 
 **Embedding model:** `all-MiniLM-L6-v2` via sentence-transformers — small, fast, runs locally with no API cost, and well-suited to short review-style text.
 
-**Top-k:** 4 chunks per query.
+**Top-k:** 5 chunks per query. (Planned as 4; raised to 5 during Milestone 4 testing — at k=4 a relevant Midway Reddit chunk sat just outside the cut at rank 5 with a good distance of 0.347. Also added exact-duplicate chunk removal after a listing site produced identical chunks that flooded the top results.)
 
 **Production tradeoff reflection:** If cost weren't a constraint, I'd weigh a larger hosted model such as OpenAI `text-embedding-3-large` or `bge-large-en`. The main gains would be higher accuracy on domain-specific phrasing (apartment names, neighborhood slang, landlord nicknames that MiniLM may treat as out-of-vocabulary) and a longer context window, which would let me use bigger chunks and split fewer rules across boundaries. The tradeoffs are added latency and per-query cost from an API round-trip, plus a dependency on an external service being available — versus MiniLM running locally and instantly. For a small student-facing tool where the text is mostly short and English, MiniLM's speed and zero cost outweigh the accuracy ceiling; at real scale I'd revisit.
 
@@ -78,7 +78,7 @@
 | # | Question | Expected answer |
 |---|----------|-----------------|
 | 1 | How many days does a landlord in Minnesota have to return my security deposit after I move out? | 21 days after the tenancy ends and the tenant gives a forwarding address; otherwise the tenant may sue (MN AG guide, source 7). |
-| 2 | Is there a cap on how much my rent can be raised each year in St. Paul? | Yes — St. Paul's rent stabilization ordinance caps annual rent increases at 3% (City of St. Paul Tenant Protections, source 8). |
+| 2 | Are there rules on how much my rent can be raised each year in St. Paul? | Yes — rent increases must follow St. Paul's Rent Stabilization Ordinance (City of St. Paul Tenant Protections, source 8). |
 | 3 | Which neighborhoods near University of St. Thomas are popular with students and considered safe? | Macalester-Groveland, Highland Park, and Union Park — close to campus, walkable, and among St. Paul's safer areas (sources 5, 11, 12). |
 | 4 | What is the Student Tenant Education Program (STEP) and why would I take it? | A self-paced Canvas course on leases, landlord relationships, and responsible renting; some landlords offer incentives to students who complete it (source 3). |
 | 5 | What do students/residents say about renting in the Midway area of St. Paul? | Mixed first-hand experiences from residents — pulled from the r/uofmn Midway thread (source 14); answer should reflect the actual posted opinions, not a generic description. |

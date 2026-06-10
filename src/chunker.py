@@ -83,11 +83,22 @@ def chunk_text(text: str, chunk_size: int = CHUNK_SIZE,
 
 
 def chunk_documents(cleaned_docs: list[dict]) -> list[dict]:
-    """Chunk every cleaned document, attaching source metadata to each chunk."""
+    """Chunk every cleaned document, attaching source metadata to each chunk.
+
+    Exact-duplicate chunks are dropped. Some sources (e.g. apartment listing
+    sites) repeat the same text many times; identical chunks add no new
+    information and would otherwise flood retrieval results with duplicates,
+    crowding out more relevant content from other sources.
+    """
     all_chunks = []
+    seen: set[str] = set()
     for doc in cleaned_docs:
         pieces = chunk_text(doc["text"])
         for i, piece in enumerate(pieces):
+            key = " ".join(piece.split()).lower()  # normalise whitespace/case
+            if key in seen:
+                continue
+            seen.add(key)
             all_chunks.append({
                 "id": f"{Path(doc['source']).stem}-{i}",
                 "source": doc["source"],
