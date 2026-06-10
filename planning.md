@@ -97,6 +97,8 @@
 
 3. **Off-topic retrieval from generic listing pages.** Sources like Apartments.com and Rentable contain lots of boilerplate (amenities lists, SEO text) that can crowd out the substantive review content during embedding, pulling irrelevant chunks for opinion-style questions. Mitigation: strip boilerplate during preprocessing and lean on the higher-signal Reddit/review sources for opinion queries.
 
+> **Realized in Milestone 4/5 (Q3 "safe neighborhoods near UST"):** the ExtraSpace article's safety ranking landed at rank 25 (distance 0.529) because its safety content is buried under long restaurant / "Things to Do" sections, while UST-mentioning listing pages ranked higher. The relevant content never reached the top-5, so at generation time the system correctly **declines** rather than guessing. Candidate fix: smaller chunks for the neighborhood guides, or a metadata tag separating "safety" from "things to do." See README Failure Case Analysis.
+
 ---
 
 ## Architecture
